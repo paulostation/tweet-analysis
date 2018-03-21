@@ -1,56 +1,35 @@
 import pandas as pd
 import numpy as np
-
-df = pd.read_csv('/home/paulostation/Documents/lula.csv', names=['sentiment', 'text']);
-
-# separate tweet text only
-tweets = df["text"].tolist()
-# separate positive tweets only
-positive_tweets = df.loc[df['sentiment'] == 'positive']['text'].tolist()
-print positive_tweets[0]
-
-from sklearn.feature_extraction.text import CountVectorizer
-vectorizer = CountVectorizer()
-X = vectorizer.fit_transform(positive_tweets) 
-
-pos_words = vectorizer.get_feature_names()
-
-print pos_words
-
+import re
 import nltk.classify.util
 from nltk.classify import NaiveBayesClassifier
-from nltk.corpus import movie_reviews
-
+# Filter non-ascii characters because Bayes classifier cannot show non-ascii on show_most_informative_features()
+def filter_non_ascii(word):
+        return re.sub(r'[^\x00-\x7f]',r'', word)
 
 def word_feats(words):
-        return dict([(word, True) for word in words])
+        return dict([(word, True) for word in words])        
 
-# print tweets[0]
+df = pd.read_csv('datasets/lula.csv', names=['sentiment', 'text']);
 
-# print data_corpus[0]
-# print type(positive_tweets)
-# print type(data_corpus)
+# separate positive tweets only
+positive_tweets = df.loc[df['sentiment'] == 'positive']['text'].tolist()
+# separate negative tweets only
+negative_tweets = df.loc[df['sentiment'] == 'negative']['text'].tolist()
 
-negids = movie_reviews.fileids('neg')
-posids = movie_reviews.fileids('pos')
+positive_tweets = map(filter_non_ascii, positive_tweets)
+negative_tweets = map(filter_non_ascii, negative_tweets)
 
-negfeats = [(word_feats(movie_reviews.words(fileids=[f])), 'neg') for f in negids]
-# posfeats = [((word_feats(word, 'pos')) for word in pos_words]
+posfeats = [(word_feats(tweet.split()), 'pos') for tweet in positive_tweets]
+negfeats = [(word_feats(tweet.split()), 'neg') for tweet in negative_tweets]
+# separate 75% for train, 25% for test
+negcutoff = len(negfeats)*3/4
+poscutoff = len(posfeats)*3/4
 
-# print negfeats[0]
+trainfeats = negfeats[:negcutoff] + posfeats[:poscutoff]
+testfeats = negfeats[negcutoff:] + posfeats[poscutoff:]
+print 'train on %d instances, test on %d instances' % (len(trainfeats), len(testfeats))
 
-# print pos_words
-# print movie_reviews.words(negids[0])
-
-
-
-# negcutoff = len(negfeats)*3/4
-# poscutoff = len(posfeats)*3/4
-
-# trainfeats = negfeats[:negcutoff] + posfeats[:poscutoff]
-# testfeats = negfeats[negcutoff:] + posfeats[poscutoff:]
-# print 'train on %d instances, test on %d instances' % (len(trainfeats), len(testfeats))
-
-# classifier = NaiveBayesClassifier.train(trainfeats)
-# print 'accuracy:', nltk.classify.util.accuracy(classifier, testfeats)
-# classifier.show_most_informative_features()
+classifier = NaiveBayesClassifier.train(trainfeats)
+print 'accuracy:', nltk.classify.util.accuracy(classifier, testfeats)
+classifier.show_most_informative_features()
