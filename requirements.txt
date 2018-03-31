@@ -1,0 +1,5 @@
+cf-deployment-tracker==1.0.4
+Flask
+pandas
+numpy
+nltk

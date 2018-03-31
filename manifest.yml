@@ -1,0 +1,9 @@
+applications:
+- name: tweet-analyzer
+  disk_quota: 1G
+  instances: 1
+  memory: 128M
+  routes:
+  - route: tweet-analyzer.mybluemix.net
+  stack: cflinuxfs2
+  buildpack: python_buildpack
