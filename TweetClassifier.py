@@ -4,9 +4,6 @@ import re
 import nltk.classify.util
 from nltk.classify import NaiveBayesClassifier
 
-from nltk.corpus import stopwords
-stopset = set(stopwords.words('portuguese'))
-
 # global variable used as classifier
 classifier = None
 
@@ -16,7 +13,7 @@ def filter_non_ascii(word):
 
 
 def word_feats(words):
-    return dict([(word, True) for word in words if word not in stopset])
+    return dict([(word, True) for word in words])
 
 # Function used to classify tweets
 def classify(text):
