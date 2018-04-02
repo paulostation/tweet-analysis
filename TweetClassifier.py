@@ -7,13 +7,17 @@ from nltk.classify import NaiveBayesClassifier
 # global variable used as classifier
 classifier = None
 
+stopwords = set(["sobre","se","voc","isso","q","do","vai","pra","a","o","dilma","lula","bolsonaro","no","quando","cara","uma","so","um","da","ato","faz","as","esto","mais","com","foi","mesmo","das","quer","fazer","eu"])
+
 # Filter non-ascii characters because Bayes classifier cannot show non-ascii on show_most_informative_features()
 def filter_non_ascii(word):
     return re.sub(r'[^\x00-\x7f]', r'', word)
 
+def filter_symbols(word):
+    return re.sub(r'[^A-z\ ]|(https:\/\/[^\s]+)', r'', word)
 
 def word_feats(words):
-    return dict([(word, True) for word in words])
+    return dict([(word, True) for word in words if word.lower() not in stopwords])
 
 # Function used to classify tweets
 def classify(text):
