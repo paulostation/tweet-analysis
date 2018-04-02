@@ -15,5 +15,7 @@ TODO
 
  - [X] Make classifier work with csv file
  - [X] Modularize app
+ - [X] Add Continuous Deployment to the app
+ - [X] Add tests
  - [ ] Filter out words that are in both feature sets, as they don't differentiate features
  - [ ] Test usage section
