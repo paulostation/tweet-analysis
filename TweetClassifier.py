@@ -7,14 +7,16 @@ from nltk.classify import NaiveBayesClassifier
 # global variable used as classifier
 classifier = None
 
-stopwords = set(["sobre","se","voc","isso","q","do","vai","pra","a","o","dilma","lula","bolsonaro","no","quando","cara","uma","so","um","da","ato","faz","as","esto","mais","com","foi","mesmo","das","quer","fazer","eu"])
+stopwords = set(["diz","sem","sua","e","sobre","se","voc","isso","q","do","vai","pra","a","o","dilma","lula","bolsonaro","no","quando","cara","uma","so","um","da","ato","faz","as","esto","mais","com","foi","mesmo","das","quer","fazer","eu"])
 
 # Filter non-ascii characters because Bayes classifier cannot show non-ascii on show_most_informative_features()
 def filter_non_ascii(word):
     return re.sub(r'[^\x00-\x7f]', r'', word)
 
 def filter_symbols(word):
-    return re.sub(r'[^A-z\ ]|(https:\/\/[^\s]+)', r'', word)
+    word = re.sub(r'https:\/\/[^\s]+', r'', word)
+    word = re.sub(r'[^A-z\ ]', r'', word)
+    return word
 
 def word_feats(words):
     return dict([(word, True) for word in words if word.lower() not in stopwords])
@@ -34,9 +36,15 @@ negative_tweets = df.loc[df['sentiment'] == 'negative']['text'].tolist()
 # separate neutral tweets only
 neutral_tweets = df.loc[df['sentiment'] == 'neutral']['text'].tolist()
 
+print len(neutral_tweets)
+
 positive_tweets = map(filter_non_ascii, positive_tweets)
 negative_tweets = map(filter_non_ascii, negative_tweets)
 neutral_tweets = map(filter_non_ascii, negative_tweets)
+
+positive_tweets = map(filter_symbols, positive_tweets)
+negative_tweets = map(filter_symbols, negative_tweets)
+neutral_tweets = map(filter_symbols, negative_tweets)
 
 positive_tweets = positive_tweets[:69]
 negative_tweets = negative_tweets[:69]
