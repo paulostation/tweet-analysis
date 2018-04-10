@@ -10,6 +10,7 @@ Requirements:
 
 1. Run `pip install -r requirements.txt`
 2. Run `python app.py`
+3. Access http://localhost:5000/classify?text=Esse%20tweet%20%C3%A9%20muito%20bom to test
 
 TODO
 
