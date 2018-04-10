@@ -4,7 +4,7 @@ python:
 
 script:
   # Automated Tests (unit, integration, etc)
-  - python tests.py || true
+  - python tests.py
 
 before_deploy:
   # Install bluemix CLI
