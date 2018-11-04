@@ -1,4 +1,4 @@
-from flask import Flask, Response, request
+from flask import Flask, Response, request, send_from_directory
 import os
 from TweetClassifier import classify
 
@@ -8,6 +8,10 @@ port = int(os.getenv("VCAP_APP_PORT", 5000))
 
 def root_dir():
     return os.path.abspath(os.path.dirname(__file__))
+
+@app.route('/')
+def send_index():
+    return send_from_directory("static","index.html")
 
 @app.route('/classify',methods=['GET', 'POST'])
 def classify_tweet():
